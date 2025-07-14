@@ -57,12 +57,14 @@ class UserController extends Controller
     public function update(Request $request)
     {
         $user = $request->user();
+
         if ($user) {
             $validatedData = $request->validate([
                 'name' => 'sometimes|string|max:255',
                 'biography' => 'sometimes|string|max:1000',
                 'photo_url' => 'sometimes|url|max:255',
             ]);
+            
             $user->update($validatedData);
             return response()->json(['message' => 'User updated successfully'], 200);
         }
