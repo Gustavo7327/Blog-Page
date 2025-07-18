@@ -25,7 +25,7 @@ class UserController extends Controller
 
         Auth::login($user);
 
-        return response()->json(['message' => 'User registered successfully'], 201);
+        return redirect('/')->with('success', 'User registered successfully');
     }
 
 
@@ -38,10 +38,10 @@ class UserController extends Controller
 
         if (Auth::attempt($request->only('email', 'password'))) {
             $request->session()->regenerate();
-            return response()->json(['message' => 'User logged in successfully'], 200);
+            return redirect('/')->with('success', 'User logged in successfully');
         }
 
-        return response()->json(['message' => 'Invalid credentials'], 401);
+        return redirect('/login')->withErrors(['email' => 'Invalid credentials']);
     }
 
 
@@ -50,7 +50,7 @@ class UserController extends Controller
         Auth::logout();
         $request->session()->invalidate();
         $request->session()->regenerateToken();
-        return response()->json(['message' => 'User logged out successfully'], 200);
+        return redirect('/login')->with('success', 'User logged out successfully');
     }
 
 
@@ -70,5 +70,17 @@ class UserController extends Controller
         }
 
         return response()->json(['message' => 'User not found'], 404);
+    }
+
+
+    public function create()
+    {
+        return view('auth.register');
+    }
+
+
+    public function loginForm()
+    {
+        return view('auth.login');
     }
 }
