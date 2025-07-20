@@ -14,7 +14,7 @@
             <ul class="flex flex-row justify-between text-lg pr-4 space-x-16">
                 <li><a href="/">Home</a></li>
                 <li><a href="/#articles">Articles</a></li>
-                <li><a href="/#contact">Contact</a></li>
+                <li><a href="/#about">About</a></li>
             </ul>
         </nav>
 
