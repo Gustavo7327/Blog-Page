@@ -18,7 +18,10 @@ Route::get('/login', [UserController::class, 'loginForm'])->name('login.form');
 Route::post('/logout', [UserController::class, 'logout'])->name('logout');
 
 // view post
-Route::get('/posts/{post}', [PostController::class, 'show'])->name('posts.show');
+Route::get('/posts/{post}', [PostController::class, 'show'])
+    ->where('post', '[0-9]+')
+    ->name('posts.show');
+
 
 // view user profile
 Route::get('/profile/{userId}', [UserController::class, 'show'])->name('profile.show');
