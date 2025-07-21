@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Post;
+use App\Models\User;
 use Illuminate\Http\Request;
 
 class PostController extends Controller
@@ -16,7 +17,8 @@ class PostController extends Controller
     public function show($id)
     {
         $post = Post::findOrFail($id);
-        return view('posts.show', compact('post'));
+        $owner = User::find($post->owner_id);
+        return view('posts.show', compact('post', 'owner'));
     }
 
     public function edit(Request $request, $id)
@@ -34,9 +36,9 @@ class PostController extends Controller
             'title' => 'required|string|max:255',
             'content' => 'required|string',
             'estimated_reading_time' => 'required|integer|min:1',
-            'description' => 'nullable|string|max:255',
-            'categorie' => 'required|string|max:255',
-            'tags' => 'nullable|array',
+            'description' => 'required|string|max:255',
+            'category' => 'required|string|max:255',
+            'tags' => 'nullable|string|max:1000',
         ]);
 
         $post = new Post([
@@ -46,13 +48,14 @@ class PostController extends Controller
             'estimated_reading_time' => $request->input('estimated_reading_time'),
             'likes' => 0, 
             'description' => $request->input('description'),
-            'categorie' => $request->input('categorie'),
+            'category' => $request->input('category'),
             'tags' => $request->input('tags'),
         ]);
 
         $post->save();
 
-        return response()->json(['message' => 'Post created successfully'], 201);
+        return redirect()->route('posts.show', $post->id)
+                         ->with('success', 'Post created successfully');
     }
 
     public function update(Request $request, $id)

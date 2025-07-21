@@ -14,7 +14,7 @@ class Post extends Model
         'estimated_reading_time',
         'likes',
         'description',
-        'categorie',
+        'category',
         'tags',
     ];
 

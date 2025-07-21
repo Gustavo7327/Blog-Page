@@ -19,7 +19,7 @@ return new class extends Migration
             $table->integer('likes')->default(0);
             $table->integer('estimated_reading_time');
             $table->string('description');
-            $table->string('categorie');
+            $table->string('category');
             $table->json('tags')->nullable();
             $table->dateTime('created_at')->useCurrent();
             $table->dateTime('updated_at')->useCurrent()->nullable();
