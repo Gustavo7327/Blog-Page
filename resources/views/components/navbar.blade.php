@@ -21,7 +21,13 @@
         @if (auth()->check())
             <div class="hidden md:flex flex-row space-x-4 items-center">
                 <a href="/posts/create" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded w-48 text-center">Write a post</a>
-                <a href="/profile"><img src="{{ Auth::user()->photo_url }}" alt="" class="rounded-full aspect-square object-cover w-10 h-10"></a>
+                @if(auth()->user()->photo_url)
+                    <a href="/profile"><img src="{{ Auth::user()->photo_url }}" alt="" class="rounded-full aspect-square object-cover w-12 h-12"></a>
+                @else
+                    <a href="/profile" class="w-12 h-12 rounded-full bg-gray-700 flex items-center justify-center text-blue-400 font-bold border-2 border-blue-500">
+                        {{ strtoupper(substr(auth()->user()->name, 0, 1)) }}
+                    </a>
+                @endif
             </div>
         @else
             <div class="hidden md:flex flex-row space-x-4">
@@ -39,7 +45,13 @@
                 @if (auth()->check())
                     <li><a href="/posts/create" class="block w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded text-center">Write a post</a></li>
                     <li class="flex justify-center">
-                        <a href="/profile"><img src="{{ Auth::user()->photo_url }}" alt="Profile" class="rounded-full aspect-square object-cover w-12 h-12"></a>
+                        @if(auth()->user()->photo_url)
+                            <a href="/profile"><img src="{{ Auth::user()->photo_url }}" alt="" class="rounded-full aspect-square object-cover w-12 h-12"></a>
+                        @else
+                            <a href="/profile" class="w-12 h-12 rounded-full bg-gray-700 flex items-center justify-center text-blue-400 font-bold border-2 border-blue-500">
+                                {{ strtoupper(substr(auth()->user()->name, 0, 1)) }}
+                            </a>
+                        @endif
                     </li>
                 @else
                     <li><a href="/login" class="block w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded text-center">Login</a></li>
