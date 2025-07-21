@@ -8,6 +8,26 @@ use Illuminate\Http\Request;
 class PostController extends Controller
 {
     
+    public function create()
+    {
+        return view('posts.create');
+    }
+
+    public function show($id)
+    {
+        $post = Post::findOrFail($id);
+        return view('posts.show', compact('post'));
+    }
+
+    public function edit(Request $request, $id)
+    {
+        $post = Post::findOrFail($id);
+        if ($post->owner_id !== $request->user()->id) {
+            abort(403, 'Unauthorized action.');
+        }
+        return view('posts.edit', compact('post'));
+    }
+
     public function store(Request $request)
     {
         $request->validate([
