@@ -113,9 +113,19 @@
                         <span class="text-red-400 text-sm">{{ $message }}</span>
                     @enderror
                 </div>
-                <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 font-bold w-full">
-                    Update Post
-                </button>
+                <div class="flex flex-row flex-wrap items-center gap-4">
+                     <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 font-bold">
+                        Update Post
+                    </button>
+                    <form action="{{ route('posts.destroy', $post->id) }}" method="post">
+                        @csrf
+                        @method('DELETE')
+                        <button type="submit" class="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 font-bold">
+                            Delete Post
+                        </button>
+                    </form>           
+                </div>
+                
             </form>
             <div class="mt-8">
                 <h3 class="text-lg font-semibold text-white mb-2">Content Preview:</h3>

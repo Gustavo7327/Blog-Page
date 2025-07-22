@@ -92,11 +92,12 @@ class PostController extends Controller
         $post = Post::findOrFail($id);
 
         if ($post->owner_id !== $request->user()->id) {
-            return response()->json(['message' => 'Unauthorized'], 403);
+            return redirect()->route('posts.show', $post->id)
+                             ->with('error', 'Unauthorized action.');
         }
 
         $post->delete();
 
-        return response()->json(['message' => 'Post deleted successfully'], 200);
+        return redirect("/")->with('success', 'Post deleted successfully');
     }
 }
