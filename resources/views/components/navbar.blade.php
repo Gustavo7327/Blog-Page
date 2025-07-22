@@ -20,7 +20,9 @@
 
         @if (auth()->check())
             <div class="hidden md:flex flex-row space-x-4 items-center">
-                <a href="/posts/create" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded w-48 text-center">Write a post</a>
+                @if(request()->path() !== 'posts/create')
+                    <a href="/posts/create" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded w-48 text-center">Write a post</a>
+                @endif
                 @if(auth()->user()->photo_url)
                     <a href="/profile"><img src="{{ Auth::user()->photo_url }}" alt="" class="rounded-full aspect-square object-cover w-12 h-12"></a>
                 @else
