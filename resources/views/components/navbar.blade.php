@@ -24,9 +24,9 @@
                     <a href="/posts/create" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded w-48 text-center">Write a post</a>
                 @endif
                 @if(auth()->user()->photo_url)
-                    <a href="/profile"><img src="{{ Auth::user()->photo_url }}" alt="" class="rounded-full aspect-square object-cover w-12 h-12"></a>
+                    <a href="{{ route('profile.show', Auth::user()->id) }}"><img src="{{ Auth::user()->photo_url }}" alt="" class="rounded-full aspect-square object-cover w-12 h-12"></a>
                 @else
-                    <a href="/profile" class="w-12 h-12 rounded-full bg-gray-700 flex items-center justify-center text-blue-400 font-bold border-2 border-blue-500">
+                    <a href="{{ route('profile.show', Auth::user()->id) }}" class="w-12 h-12 rounded-full bg-gray-700 flex items-center justify-center text-blue-400 font-bold border-2 border-blue-500">
                         {{ strtoupper(substr(auth()->user()->name, 0, 1)) }}
                     </a>
                 @endif
@@ -48,9 +48,9 @@
                     <li><a href="/posts/create" class="block w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded text-center">Write a post</a></li>
                     <li class="flex justify-center">
                         @if(auth()->user()->photo_url)
-                            <a href="/profile"><img src="{{ Auth::user()->photo_url }}" alt="" class="rounded-full aspect-square object-cover w-12 h-12"></a>
+                            <a href="{{ route('profile.show', Auth::user()->id) }}"><img src="{{ Auth::user()->photo_url }}" alt="" class="rounded-full aspect-square object-cover w-12 h-12"></a>
                         @else
-                            <a href="/profile" class="w-12 h-12 rounded-full bg-gray-700 flex items-center justify-center text-blue-400 font-bold border-2 border-blue-500">
+                            <a href="{{ route('profile.show', Auth::user()->id) }}" class="w-12 h-12 rounded-full bg-gray-700 flex items-center justify-center text-blue-400 font-bold border-2 border-blue-500">
                                 {{ strtoupper(substr(auth()->user()->name, 0, 1)) }}
                             </a>
                         @endif
