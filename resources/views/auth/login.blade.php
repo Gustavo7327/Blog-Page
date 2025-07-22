@@ -27,6 +27,9 @@
                     @enderror
                 </div>
                 <button type="submit" class="w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Login</button>
+                <div class="flex flex-row justify-center mt-4">
+                    <p class="text-white">Do you not have an account? <a href="/register" class="text-blue-400 hover:underline">Register</a></p>
+                </div>
             </form>
         </section>
     </main>

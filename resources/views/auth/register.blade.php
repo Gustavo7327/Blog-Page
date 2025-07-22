@@ -34,6 +34,9 @@
                     @enderror
                 </div>
                 <button type="submit" class="w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Register</button>
+                <div class="flex flex-row justify-center mt-4">
+                    <p class="text-white">Do you have an account? <a href="/login" class="text-blue-400 hover:underline">Login</a></p>
+                </div>
             </form>
         </section>
     </main>
