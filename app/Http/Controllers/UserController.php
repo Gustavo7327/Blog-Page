@@ -83,4 +83,23 @@ class UserController extends Controller
     {
         return view('auth.login');
     }
+
+
+    public function show($userId)
+    {
+        $user = User::findOrFail($userId);
+        return view('profile.show', compact('user'));
+    }
+
+
+    public function edit($userId)
+    {
+        $user = User::findOrFail($userId);
+        
+        if (Auth::user()->id !== $user->id) {
+            return redirect()->route('profile.show', ['userId' => $user->id])->withErrors(['error' => 'You do not have permission to edit this profile']);
+        }
+
+        return view('profile.edit', compact('user'));
+    }
 }
