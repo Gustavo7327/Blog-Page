@@ -63,7 +63,8 @@ class PostController extends Controller
         $post = Post::findOrFail($id);
 
         if ($post->owner_id !== $request->user()->id) {
-            return response()->json(['message' => 'Unauthorized'], 403);
+            return redirect()->route('posts.show', $post->id)
+                             ->with('error', 'Unauthorized action.');
         }
 
         $validatedData = $request->validate([
@@ -71,13 +72,19 @@ class PostController extends Controller
             'content' => 'sometimes|string',
             'estimated_reading_time' => 'sometimes|integer|min:1',
             'description' => 'sometimes|string|max:255',
-            'categorie' => 'sometimes|string|max:255',
-            'tags' => 'nullable|array',
+            'category' => 'sometimes|string|max:255',
+            'tags' => 'nullable',
         ]);
+
+        if (isset($validatedData['tags']) && is_string($validatedData['tags'])) {
+            $decoded = json_decode($validatedData['tags'], true);
+            $validatedData['tags'] = is_array($decoded) ? $decoded : [];
+        }
 
         $post->update($validatedData);
 
-        return response()->json(['message' => 'Post updated successfully'], 200);
+        return redirect()->route('posts.show', $post->id)
+                         ->with('success', 'Post updated successfully');
     }
 
     public function destroy(Request $request, $id)
