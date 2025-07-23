@@ -62,14 +62,23 @@ class UserController extends Controller
             $validatedData = $request->validate([
                 'name' => 'sometimes|string|max:255',
                 'biography' => 'sometimes|string|max:1000',
-                'photo_url' => 'sometimes|url|max:255',
+                'photo_url' => 'sometimes|file|mimes:jpg,png,jpeg,gif',
             ]);
-            
+
+            if ($request->hasFile('photo_url')) {
+                $file = $request->file('photo_url');
+                $extension = $file->getClientOriginalExtension();
+                $filename = $user->name . '_' . date('Y-m-d_His') . '.' . $extension;
+                $path = $request->file('photo_url')->storeAs('profile_photos', $filename, 'public');
+                $path = asset('storage/' . $path);
+                $validatedData['photo_url'] = $path;
+            }
+
             $user->update($validatedData);
-            return response()->json(['message' => 'User updated successfully'], 200);
+            return redirect()->route('profile.show', ['userId' => $user->id])->with('success', 'Profile updated successfully');
         }
 
-        return response()->json(['message' => 'User not found'], 404);
+        return redirect()->back()->withErrors(['error' => 'User not found']);
     }
 
 
