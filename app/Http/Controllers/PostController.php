@@ -18,7 +18,8 @@ class PostController extends Controller
     {
         $post = Post::findOrFail($id);
         $owner = User::find($post->owner_id);
-        return view('posts.show', compact('post', 'owner'));
+        $comments = $post->comments()->with('user')->get();
+        return view('posts.show', compact('post', 'owner', 'comments'));
     }
 
     public function edit(Request $request, $id)
