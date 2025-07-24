@@ -56,6 +56,63 @@
                     <a href="{{ route('posts.edit', $post->id) }}" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded transition">Edit Post</a>
                 @endif
             </div>
+            <section class="mt-8 flex flex-col items-center">
+                <h2 class="text-2xl font-bold text-white mt-8 mb-4">Comments</h2>
+                @if(auth()->check())
+                    <div class="w-full mb-6">
+                        <span class="w-full flex items-end justify-end">
+                            <button
+                            id="show-comment-form"
+                            type="button"
+                            class="w-30 items-start flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded transition"
+                        >
+                            Add a comment
+                        </button>
+                        </span>
+                        
+                        <form
+                            id="comment-form"
+                            action="{{ route('comments.store', $post->id) }}"
+                            method="POST"
+                            class="hidden mt-4"
+                        >
+                            @csrf
+                            <textarea name="content" rows="3" class="w-full p-3 bg-gray-700 text-gray-200 rounded-lg border border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Add a comment..." required></textarea>
+                            <div class="flex justify-end gap-2 mt-2">
+                                <button type="button" id="cancel-comment" class="bg-gray-600 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded transition">Cancel</button>
+                                <button type="submit" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded transition">Post Comment</button>
+                            </div>
+                        </form>
+                    </div>
+                    <script>
+                        document.addEventListener('DOMContentLoaded', function () {
+                            const showBtn = document.getElementById('show-comment-form');
+                            const form = document.getElementById('comment-form');
+                            const cancelBtn = document.getElementById('cancel-comment');
+                            if (showBtn && form) {
+                                showBtn.addEventListener('click', () => {
+                                    form.classList.remove('hidden');
+                                    showBtn.classList.add('hidden');
+                                });
+                            }
+                            if (cancelBtn && form && showBtn) {
+                                cancelBtn.addEventListener('click', () => {
+                                    form.classList.add('hidden');
+                                    showBtn.classList.remove('hidden');
+                                    form.querySelector('textarea').value = '';
+                                });
+                            }
+                        });
+                    </script>
+                @endif
+                @if($comments->isEmpty())
+                    <p class="text-gray-400">No comments yet. Be the first to comment!</p>
+                @else
+                    @foreach($comments as $comment)
+                        <x-comment :comment="$comment" />
+                    @endforeach
+                @endif
+            </section>
         </div>
     </main>
 
