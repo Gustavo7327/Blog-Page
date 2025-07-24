@@ -14,16 +14,16 @@ class UserFollowController extends Controller
         $userToFollow = User::findOrFail($userId);
 
         if ($user->id === $userToFollow->id) {
-            return response()->json(['message' => 'You cannot follow yourself'], 400);
+            return redirect()->back()->with('error', 'You cannot follow yourself');
         }
 
         if ($user->follows()->where('user_followed', $userToFollow->id)->exists()) {
-            return response()->json(['message' => 'You are already following this user'], 400);
+            return redirect()->back()->with('error', 'You are already following this user');
         }
 
         $user->follows()->attach($userToFollow->id);
 
-        return response()->json(['message' => 'Successfully followed user'], 200);
+        return redirect()->back()->with('success', 'Successfully followed user');
     }
 
     public function unfollow(Request $request, $userId)
@@ -32,15 +32,15 @@ class UserFollowController extends Controller
         $userToUnfollow = User::findOrFail($userId);
 
         if ($user->id === $userToUnfollow->id) {
-            return response()->json(['message' => 'You cannot unfollow yourself'], 400);
+            return redirect()->back()->with('error', 'You cannot unfollow yourself');
         }
 
         if (!$user->follows()->where('user_followed', $userToUnfollow->id)->exists()) {
-            return response()->json(['message' => 'You are not following this user'], 400);
+            return redirect()->back()->with('error', 'You are not following this user');
         }
 
         $user->follows()->detach($userToUnfollow->id);
 
-        return response()->json(['message' => 'Successfully unfollowed user'], 200);
+        return redirect()->back()->with('success', 'Successfully unfollowed user');
     }
 }

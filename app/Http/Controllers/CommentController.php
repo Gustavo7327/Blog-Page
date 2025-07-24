@@ -23,7 +23,8 @@ class CommentController extends Controller
 
         $comment->save();
 
-        return response()->json($comment, 201);
+        return redirect()->back()
+                         ->with('success', 'Comment added successfully');
     }
 
     
@@ -42,6 +43,9 @@ class CommentController extends Controller
         $validatedData['updated_at'] = now();
 
         $comment->update($validatedData);
+
+        return redirect()->back()
+                         ->with('success', 'Comment updated successfully');
     }
 
     public function destroy(Request $request, $id)
@@ -54,6 +58,7 @@ class CommentController extends Controller
 
         $comment->delete();
 
-        return response()->json(['message' => 'Comment deleted'], 204);
+        return redirect()->back()
+                         ->with('success', 'Comment deleted successfully');
     }
 }
