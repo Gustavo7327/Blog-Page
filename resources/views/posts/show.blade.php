@@ -18,11 +18,13 @@
                 </div>
                 <div class="flex items-center gap-3">
                     @if($owner->photo_url)
+                    <a href="{{ route('profile.show', $owner->id) }}">
                         <img src="{{ $owner->photo_url }}" alt="Author photo" class="w-12 h-12 rounded-full object-cover border-2 border-blue-500">
+                    </a>
                     @else
-                        <div class="w-12 h-12 rounded-full bg-gray-700 flex items-center justify-center text-blue-400 font-bold border-2 border-blue-500">
+                        <a href="{{ route('profile.show', $owner->id) }}" class="w-12 h-12 rounded-full bg-gray-700 flex items-center justify-center text-blue-400 font-bold border-2 border-blue-500">
                             {{ strtoupper(substr($owner->name, 0, 1)) }}
-                        </div>
+                        </a>
                     @endif
                     <div>
                         <div class="text-white font-semibold">{{ $owner->name }}</div>
