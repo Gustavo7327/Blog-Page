@@ -14,6 +14,7 @@ class PostController extends Controller
         return view('posts.create');
     }
 
+
     public function show($id)
     {
         $post = Post::findOrFail($id);
@@ -21,6 +22,7 @@ class PostController extends Controller
         $comments = $post->comments()->with('user')->get();
         return view('posts.show', compact('post', 'owner', 'comments'));
     }
+
 
     public function edit(Request $request, $id)
     {
@@ -30,6 +32,7 @@ class PostController extends Controller
         }
         return view('posts.edit', compact('post'));
     }
+
 
     public function store(Request $request)
     {
@@ -57,6 +60,7 @@ class PostController extends Controller
         return redirect()->route('posts.show', $post->id)
                          ->with('success', 'Post created successfully');
     }
+
 
     public function update(Request $request, $id)
     {
@@ -87,6 +91,7 @@ class PostController extends Controller
                          ->with('success', 'Post updated successfully');
     }
 
+
     public function destroy(Request $request, $id)
     {
         $post = Post::findOrFail($id);
@@ -99,5 +104,25 @@ class PostController extends Controller
         $post->delete();
 
         return redirect("/")->with('success', 'Post deleted successfully');
+    }
+
+
+    public function like(Request $request, $id)
+    {
+        $post = Post::findOrFail($id);
+
+        $post->likes()->attach($request->user()->id);
+
+        return response()->json(['message' => 'Post liked successfully'], 200);
+    }
+
+
+    public function unlike(Request $request, $id)
+    {
+        $post = Post::findOrFail($id);
+
+        $post->likes()->detach($request->user()->id);
+
+        return response()->json(['message' => 'Post unliked successfully'], 200);
     }
 }

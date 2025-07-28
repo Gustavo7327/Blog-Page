@@ -22,8 +22,15 @@ class CommentController extends Controller
 
         $comment->save();
 
-        return redirect()->back()
-                         ->with('success', 'Comment added successfully');
+        return response()->json([
+            'comment' => [
+                'content' => $comment->content,
+            ],
+            'user' => [
+                'name' => request()->user()->name,
+                'photo_url' => request()->user()->photo_url,
+            ]
+        ], 201);
     }
 
     
@@ -43,9 +50,11 @@ class CommentController extends Controller
 
         $comment->update($validatedData);
 
-        return redirect()->back()
-                         ->with('success', 'Comment updated successfully');
+        return response()->json(['message' => 'Comment updated successfully',
+            'comment' => $comment
+        ], 200);
     }
+
 
     public function destroy(Request $request, $id)
     {
@@ -57,7 +66,28 @@ class CommentController extends Controller
 
         $comment->delete();
 
-        return redirect()->back()
-                         ->with('success', 'Comment deleted successfully');
+        return response()->json(['message' => 'Comment deleted successfully',
+            'deleted' => true,
+        ], 200);
+    }
+
+
+    public function like(Request $request, $id)
+    {
+        $comment = Comment::findOrFail($id);
+
+        $comment->likes()->attach($request->user()->id);
+
+        return response()->json(['message' => 'Comment liked successfully'], 200);
+    }
+
+
+    public function unlike(Request $request, $id)
+    {
+        $comment = Comment::findOrFail($id);
+
+        $comment->likes()->detach($request->user()->id);
+
+        return response()->json(['message' => 'Comment unliked successfully'], 200);
     }
 }
