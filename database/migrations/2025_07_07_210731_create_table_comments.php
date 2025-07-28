@@ -16,7 +16,6 @@ return new class extends Migration
             $table->unsignedBigInteger('post_id');
             $table->unsignedBigInteger('user_id');
             $table->text('content');
-            $table->integer('likes')->default(0);
             $table->dateTime('created_at')->useCurrent();
             $table->dateTime('updated_at')->useCurrent()->nullable();
             $table->foreign('post_id')->references('id')->on('posts')->onDelete('cascade');

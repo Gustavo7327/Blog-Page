@@ -18,7 +18,6 @@ class CommentController extends Controller
             'post_id' => $post_id,
             'user_id' => $request->user()->id,
             'content' => $validatedData['content'],
-            'likes' => 0,
         ]);
 
         $comment->save();

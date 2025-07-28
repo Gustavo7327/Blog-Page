@@ -12,7 +12,6 @@ class Post extends Model
         'title',
         'content',
         'estimated_reading_time',
-        'likes',
         'description',
         'category',
         'tags',

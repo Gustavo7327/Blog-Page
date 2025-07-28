@@ -16,7 +16,6 @@ return new class extends Migration
             $table->unsignedBigInteger('owner_id');
             $table->string('title');
             $table->text('content');
-            $table->integer('likes')->default(0);
             $table->integer('estimated_reading_time');
             $table->string('description');
             $table->string('category');

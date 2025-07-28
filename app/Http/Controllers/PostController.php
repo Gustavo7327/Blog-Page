@@ -47,7 +47,6 @@ class PostController extends Controller
             'title' => $request->input('title'),
             'content' => $request->input('content'),
             'estimated_reading_time' => $request->input('estimated_reading_time'),
-            'likes' => 0, 
             'description' => $request->input('description'),
             'category' => $request->input('category'),
             'tags' => $request->input('tags'),
