@@ -1,5 +1,10 @@
 @props(['comment'])
 
+@php
+    $user = auth()->user();
+    $liked = $user ? $comment->likes->contains($user->id) : false;
+@endphp
+
 <div class="flex items-start gap-4 bg-gray-800 rounded-lg p-4 mb-4 shadow w-full">
     @if($comment->user->photo_url)
         <img src="{{ $comment->user->photo_url }}" alt="Profile photo" class="w-10 h-10 rounded-full object-cover border-2 border-blue-500">
@@ -23,8 +28,8 @@
             id="edit-form-{{ $comment->id }}" 
             action="{{ route('comments.update', $comment->id) }}" 
             method="POST" 
-            class="hidden mb-2"
-        >
+            class="hidden mb-2">
+
             @csrf
             @method('PATCH')
             <textarea name="content" rows="3" class="w-full p-2 rounded bg-gray-700 text-white mb-2 focus:outline-none focus:ring-2 focus:ring-blue-500">{{ old('content', $comment->content) }}</textarea>
@@ -34,13 +39,33 @@
             </div>
         </form>
         <div class="flex items-center gap-3">
-            <span class="text-sm text-gray-400 flex items-center gap-1">
-                <svg class="w-5 h-5 text-red-400" fill="currentColor" viewBox="0 0 20 20"><path d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z"/></svg>
-                {{ $comment->likes ?? 0 }}
-            </span>
+            <form 
+                id="like-form-{{ $comment->id }}"
+                action="{{ route('comments.like', $comment->id) }}"
+                method="POST"
+                class="flex items-center mb-0"
+            >
+                @csrf
+                <input type="hidden" name="_method" value="{{ $liked ? 'DELETE' : 'POST' }}">
+                <button
+                    type="submit"
+                    class="focus:outline-none"
+                    aria-label="Like"
+                >
+                    <svg class="w-5 h-5 transition" id="like-heart-{{ $comment->id }}" fill="{{ $liked ? 'red' : 'none' }}" stroke="{{ $liked ? 'red' : '#6b7280' }}" viewBox="0 0 20 20">
+                        <path stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z"/>
+                    </svg>
+                </button>
+                <span id="like-count-{{ $comment->id }}" class="ml-1 text-gray-200">{{ $comment->likes->count() }}</span>
+            </form>
 
             @if(auth()->check() && auth()->user()->id === $comment->user_id)
-                <form action="{{ route('comments.destroy', $comment->id) }}" method="post" class="flex items-center justify-center mb-0">
+                <form 
+                    id="delete-form-{{ $comment->id }}"
+                    action="{{ route('comments.destroy', $comment->id) }}" 
+                    method="post" 
+                    class="flex items-center justify-center mb-0"
+                >
                     @csrf
                     @method('DELETE')
                     <button type="submit" class="text-red-400 hover:text-red-600 transition flex items-center gap-1 mb-0">
@@ -55,16 +80,113 @@
     </div>
 </div>
 
+@if(auth()->check())
 <script>
-function toggleEditForm(commentId, show) {
-    const form = document.getElementById('edit-form-' + commentId);
-    const content = document.getElementById('comment-content-' + commentId);
-    if (show) {
-        form.classList.remove('hidden');
-        content.classList.add('hidden');
-    } else {
-        form.classList.add('hidden');
-        content.classList.remove('hidden');
+document.addEventListener('DOMContentLoaded', function () {
+    const likeForm = document.getElementById('like-form-{{ $comment->id }}');
+    const editForm = document.getElementById('edit-form-{{ $comment->id }}');
+    const deleteForm = document.getElementById('delete-form-{{ $comment->id }}');
+
+    if (likeForm) {
+        likeForm.addEventListener('submit', function (e) {
+            e.preventDefault();
+            const heart = document.getElementById('like-heart-{{ $comment->id }}');
+            const countSpan = document.getElementById('like-count-{{ $comment->id }}');
+            let liked = heart.getAttribute('fill') === 'red';
+            let method = liked ? 'DELETE' : 'POST';
+
+            fetch(likeForm.action, {
+                method: method,
+                headers: {
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                    'Accept': 'application/json'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                let count = parseInt(countSpan.textContent);
+                if (!liked) {
+                    heart.setAttribute('fill', 'red');
+                    heart.setAttribute('stroke', 'red');
+                    countSpan.textContent = count + 1;
+                } else {
+                    heart.setAttribute('fill', 'none');
+                    heart.setAttribute('stroke', '#6b7280');
+                    countSpan.textContent = count - 1;
+                }
+            })
+            .catch(() => {
+                alert('Could not process like. Please try again.');
+            });
+        });
     }
-}
+
+    if (editForm) {
+        editForm.addEventListener('submit', function (e) {
+            e.preventDefault();
+            const formData = new FormData(editForm);
+            fetch(editForm.action, {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                    'Accept': 'application/json'
+                },
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.comment.content) {
+                    document.getElementById('comment-content-{{ $comment->id }}').innerHTML = data.comment.content.replace(/\n/g, '<br>');
+                    toggleEditForm('{{ $comment->id }}', false);
+                } else if (data.message) {
+                    alert(data.message);
+                }
+            })
+            .catch(() => {
+                alert('Could not update comment. Please try again.');
+            });
+        });
+    }
+
+    if (deleteForm) {
+        deleteForm.addEventListener('submit', function (e) {
+            e.preventDefault();
+            if (!confirm('Are you sure you want to delete this comment?')) return;
+            fetch(deleteForm.action, {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                    'Accept': 'application/json'
+                },
+                body: new FormData(deleteForm)
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.deleted) {
+                    // Remove o comentário da tela
+                    deleteForm.closest('.bg-gray-800').remove();
+                } else if (data.message) {
+                    alert(data.message);
+                }
+            })
+            .catch(() => {
+                alert('Could not delete comment. Please try again.');
+            });
+        });
+    }
+});
+</script>
+@endif
+<script>
+    function toggleEditForm(commentId, show) {
+        const form = document.getElementById('edit-form-' + commentId);
+        const content = document.getElementById('comment-content-' + commentId);
+        if (show) {
+            form.classList.remove('hidden');
+            content.classList.add('hidden');
+        } else {
+            form.classList.add('hidden');
+            content.classList.remove('hidden');
+        }
+    }
 </script>
