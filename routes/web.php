@@ -37,11 +37,17 @@ Route::middleware('auth')->group(function () {
     Route::post('/posts', [PostController::class, 'store'])->name('posts.store');
     Route::patch('/posts/{post}', [PostController::class, 'update'])->name('posts.update');
     Route::delete('/posts/{post}', [PostController::class, 'destroy'])->name('posts.destroy');
+    //like/unlike post
+    Route::post('/posts/{post}/like', [PostController::class, 'like'])->name('posts.like');
+    Route::delete('/posts/{post}/like', [PostController::class, 'unlike'])->name('posts.unlike');
 
     //comment routes
     Route::post('/posts/{post}/comments', [CommentController::class, 'store'])->name('comments.store');
     Route::patch('/comments/{comment}', [CommentController::class, 'update'])->name('comments.update');
     Route::delete('/comments/{comment}', [CommentController::class, 'destroy'])->name('comments.destroy');
+    //like/unlike comment
+    Route::post('/comments/{comment}/like', [CommentController::class, 'like'])->name('comments.like');
+    Route::delete('/comments/{comment}/like', [CommentController::class, 'unlike'])->name('comments.unlike');
 
     //follow routes
     Route::post('/follow/{userId}', [UserFollowController::class, 'follow'])->name('follow');
