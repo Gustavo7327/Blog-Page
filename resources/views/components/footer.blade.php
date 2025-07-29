@@ -1,4 +1,4 @@
-<footer class="bg-gray-800 text-gray-300 py-8 mt-10 border-t border-gray-700">
+<footer class="bg-gray-800 text-gray-300 py-8 mt-10 border-t border-gray-700" id="about">
     <div class="max-w-7xl mx-auto px-4 flex flex-col md:flex-row justify-between items-center">
         <div class="mb-4 md:mb-0">
             <h2 class="text-xl font-bold text-white">ByteTech</h2>
