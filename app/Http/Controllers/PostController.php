@@ -15,6 +15,27 @@ class PostController extends Controller
     }
 
 
+   public function home(Request $request)
+   {
+        $search = $request->input('search');
+
+        $posts = Post::with('user')
+            ->when($search, function ($query, $search) {
+                $query->where(function ($q) use ($search) {
+                    $q->where('title', 'like', "%{$search}%")
+                    ->orWhere('description', 'like', "%{$search}%")
+                    ->orWhereJsonContains('tags', $search);
+                });
+            })
+            ->latest()
+            ->paginate(10);
+
+        $mostLiked = Post::withCount('likes')->orderByDesc('likes_count')->limit(3)->get();
+
+        return view('home', compact('posts', 'search', 'mostLiked'));
+    }
+
+
     public function show($id)
     {
         $post = Post::findOrFail($id);
