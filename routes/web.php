@@ -6,9 +6,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\UserFollowController;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/', function () {
-    return view('home');
-});
+Route::get('/', [PostController::class, 'home'])->name('home');
 
 // auth routes
 Route::post('/register', [UserController::class, 'register'])->name('register');
