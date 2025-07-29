@@ -62,6 +62,7 @@
             </ul>
         </nav>
     </div>
+    @include('components.alert')
 </header>
 
 <script>
