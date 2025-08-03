@@ -5,12 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Edit Post | {{ $post->title }} | ByteTech</title>
     @vite('resources/css/app.css')
-    <script src="https://cdn.tiny.cloud/1/cbzo1eo34tua55xfyuqp0kof5hrxy6omwmr5rro0h08o42v3/tinymce/7/tinymce.min.js" referrerpolicy="origin"></script>
+    <script src="{{ env('VITE_TINYMCE_API_KEY') }}" referrerpolicy="origin"></script>
 </head>
 <body class="bg-gray-900 min-h-screen flex flex-col">
     @include('components.navbar')
     <main class="flex-1 flex flex-col items-center justify-center">
-        <div class="max-w-4xl w-full mx-auto p-8 bg-gray-800 rounded-lg shadow-lg mt-10">
+        <div class="max-w-4xl w-full mx-auto p-8 bg-gray-800 rounded-lg shadow-lg mt-10 flex flex-col gap-4">
             <h2 class="text-2xl font-bold text-white mb-6 text-center">Edit Post</h2>
             <form method="POST" action="{{ route('posts.update', $post->id) }}" class="space-y-6">
                 @csrf
@@ -88,8 +88,13 @@
                     <label for="tags" class="block text-white mb-2">Tags <span class="text-sm text-gray-400">(optional)</span></label>
                     <div class="w-full p-2 rounded bg-gray-700 text-white focus-within:ring-2 focus-within:ring-blue-500">
                         <div id="tag-container" class="flex flex-wrap gap-2 mb-2">
-                            @if(old('tags', $post->tags))
-                                @foreach(json_decode(old('tags', $post->tags), true) as $tag)
+                            @php
+                                $tagsValue = old('tags', $post->tags);
+                                $tags = is_string($tagsValue) ? json_decode($tagsValue, true) : $tagsValue;
+                            @endphp
+
+                            @if(is_array($tags))
+                                @foreach($tags as $tag)
                                     <span class="bg-blue-600 text-white px-3 py-1 rounded-full flex items-center gap-2 text-sm">
                                         {{ $tag }}
                                         <button type="button" class="ml-1 text-white hover:text-red-300" onclick="removeTag('{{ $tag }}')">&times;</button>
@@ -104,7 +109,11 @@
                             class="w-full bg-transparent outline-none placeholder-gray-400"
                         />
                     </div>
-                    <input type="hidden" name="tags" id="tags-hidden" value="{{ old('tags', $post->tags) }}">
+                    @php
+                        $tagsValue = old('tags', $post->tags);
+                        $tagsJson = is_string($tagsValue) ? $tagsValue : json_encode($tagsValue);
+                    @endphp
+                    <input type="hidden" name="tags" id="tags-hidden" value="{{ $tagsJson }}">
                 </div>
                 <div>
                     <label for="content" class="block text-white mb-2">Content</label>
@@ -116,16 +125,15 @@
                 <div class="flex flex-row flex-wrap items-center gap-4">
                      <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 font-bold">
                         Update Post
-                    </button>
-                    <form action="{{ route('posts.destroy', $post->id) }}" method="post">
-                        @csrf
-                        @method('DELETE')
-                        <button type="submit" class="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 font-bold">
-                            Delete Post
-                        </button>
-                    </form>           
-                </div>
-                
+                    </button>           
+                </div>     
+            </form>
+            <form action="{{ route('posts.destroy', $post->id) }}" method="post">
+                @csrf
+                @method('DELETE')
+                <button type="submit" class="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 font-bold">
+                    Delete Post
+                </button>
             </form>
             <div class="mt-8">
                 <h3 class="text-lg font-semibold text-white mb-2">Content Preview:</h3>

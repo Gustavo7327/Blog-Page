@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ByteTech - Create Post</title>
     @vite('resources/css/app.css')
-    <script src="https://cdn.tiny.cloud/1/cbzo1eo34tua55xfyuqp0kof5hrxy6omwmr5rro0h08o42v3/tinymce/7/tinymce.min.js" referrerpolicy="origin"></script>
+    <script src="{{ env('VITE_TINYMCE_API_KEY') }}" referrerpolicy="origin"></script>
 </head>
 <body class="bg-gray-900 min-h-screen flex flex-col">
     @include('components.navbar')
