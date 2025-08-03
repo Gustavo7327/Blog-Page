@@ -57,23 +57,28 @@ class PostController extends Controller
 
     public function store(Request $request)
     {
-        $request->validate([
+        $validatedData = $request->validate([
             'title' => 'required|string|max:255',
             'content' => 'required|string',
             'estimated_reading_time' => 'required|integer|min:1',
             'description' => 'required|string|max:255',
             'category' => 'required|string|max:255',
-            'tags' => 'nullable|string|max:1000',
+            'tags' => 'nullable',
         ]);
+
+        if (isset($validatedData['tags']) && is_string($validatedData['tags'])) {
+            $decoded = json_decode($validatedData['tags'], true);
+            $validatedData['tags'] = is_array($decoded) ? $decoded : [];
+        }
 
         $post = new Post([
             'owner_id' => $request->user()->id,
-            'title' => $request->input('title'),
-            'content' => $request->input('content'),
-            'estimated_reading_time' => $request->input('estimated_reading_time'),
-            'description' => $request->input('description'),
-            'category' => $request->input('category'),
-            'tags' => $request->input('tags'),
+            'title' => $validatedData['title'],
+            'content' => $validatedData['content'],
+            'estimated_reading_time' => $validatedData['estimated_reading_time'],
+            'description' => $validatedData['description'],
+            'category' => $validatedData['category'],
+            'tags' => $validatedData['tags'],
         ]);
 
         $post->save();
