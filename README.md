@@ -50,12 +50,20 @@ php artisan migrate
 ```bash
 php artisan db:seed
 ```
-### 7. Inicie o servidor
+### 7. Link simbólico para armazenamento
+```bash
+php artisan storage:link
+```
+### 8. Inicie o servidor
 ```bash
 php artisan serve
 pnpm run dev
 ```
-### 8. Acesse em http://localhost:8000
+### 9. (Opcional) Utilize Docker com Laravel Sail
+```bash
+./vendor/bin/sail up -d
+```
+### 10. Acesse em http://localhost:8000
 
 ## 💡 Contribua
 Sinta-se à vontade para abrir issues, sugerir melhorias ou enviar pull requests!
